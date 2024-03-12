@@ -6,12 +6,8 @@ const cors = require('cors');
 
 const app = express();
 
-const corsOptions = {
-  origin: 'https://gilded-dasik-3233a1.netlify.app', // Replace 'your-frontend-domain' with the actual domain of your frontend
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(bodyParser.json());  //it is require for get data from request body
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/favicon.ico', (req, res, next) => {
