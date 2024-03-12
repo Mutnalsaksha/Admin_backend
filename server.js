@@ -5,7 +5,13 @@ const cors = require('cors');
 
 
 const app = express();
-app.use(cors());
+
+const corsOptions = {
+  origin: 'your-frontend-domain', // Replace 'your-frontend-domain' with the actual domain of your frontend
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+};
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());  //it is require for get data from request body
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/favicon.ico', (req, res, next) => {
