@@ -7,7 +7,7 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-  origin: 'your-frontend-domain', // Replace 'your-frontend-domain' with the actual domain of your frontend
+  origin: 'https://gilded-dasik-3233a1.netlify.app', // Replace 'your-frontend-domain' with the actual domain of your frontend
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
 };
 
