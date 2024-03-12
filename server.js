@@ -16,7 +16,7 @@ app.use('/favicon.ico', (req, res, next) => {
 
 const connectToDB = async () => {
   try {
-    await mongoose.connect('mongodb+srv://saksha:1234@cluster0.xnvkwgq.mongodb.net/', {
+    await mongoose.connect('mongodb+srv://saksha:1234@cluster0.xnvkwgq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
       useNewUrlParser: true,
       useUnifiedTopology: true
 
@@ -44,7 +44,7 @@ const bookserviceSchema = new mongoose.Schema({
 
 const BookServices = mongoose.model('BookServices', bookserviceSchema, 'bookservices');
 
-app.get('/getbookedservice/data', async (req, res) => {
+app.get('/getBookedServicesData', async (req, res) => {
   try {
     const data = await BookServices.find();
     res.json(data);
@@ -71,26 +71,6 @@ app.get('/api/login', async (req, res) => {
   }
 });
 
-// Add a POST route for login
-app.post('/api/login', async (req, res) => {
-  try {
-    // Handle the login logic here
-    // Example: Check the provided credentials and respond accordingly
-    const { email, password } = req.body;
-    const user = await LoginModel.findOne({ email, password });
-
-    if (user) {
-      // Successful login
-      res.json({ message: 'Login successful', user });
-    } else {
-      // Failed login
-      res.status(401).json({ error: 'Invalid credentials' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
 
 // Add a route for the root path
 app.get('/', (req, res) => {
