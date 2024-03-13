@@ -73,6 +73,21 @@ app.get('/api/login', async (req, res) => {
   }
 });
 
+const serviceSchema = new mongoose.Schema({
+  service: String
+});
+const ServiceModel = mongoose.model('service', serviceSchema, 'service');
+
+app.get('/api/service', async (req, res) => {
+  try {
+    const data = await ServiceModel.find();
+    res.json(data);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // Add a route for the root path
 app.get('/', (req, res) => {
