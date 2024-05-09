@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const moment = require('moment-timezone');
 
 
 const app = express();
@@ -35,7 +36,7 @@ connectToDB();
 
 
 const bookserviceSchema = new mongoose.Schema({
-  date:String,
+  date: { type: String, required: true },
   name: String,
   phoneNumber: Number,
   email: String,
@@ -48,7 +49,7 @@ const BookServices = mongoose.model('BookServices', bookserviceSchema, 'bookserv
 
 app.get('/getBookedServicesData', async (req, res) => {
   try {
-    const data = await BookServices.find();
+    const data = await BookServices.find().sort({ date: -1 });
     res.json(data);
   } catch (error) {
     console.error(error);
