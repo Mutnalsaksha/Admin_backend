@@ -62,17 +62,33 @@ const loginSchema = new mongoose.Schema({
   password: String,
 });
 
-const LoginModel = mongoose.model('login', loginSchema, 'login');
+const LoginModel = mongoose.model('login', loginSchema, 'adminlogin');
 
-app.get('/api/login', async (req, res) => {
+// Login endpoint
+app.post('/api/login', async (req, res) => {
   try {
-    const data = await LoginModel.find();
-    res.json(data);
+    const { email, password } = req.body;
+
+    // Find user by email
+    const user = await LoginModel.findOne({ email });
+
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Check password
+    if (user.password !== password) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Authentication successful
+    res.json({ message: 'Login successful', user });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 const serviceSchema = new mongoose.Schema({
   service: String
