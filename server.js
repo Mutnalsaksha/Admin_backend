@@ -105,6 +105,91 @@ app.get('/api/service', async (req, res) => {
   }
 });
 
+// Define user schema and model
+const userSchema = new mongoose.Schema({
+  Name: String,
+  Usertype: String,
+  MobileNumber: String,
+  EmailAddress: String,
+  Password: String 
+});
+
+const User = mongoose.model('User', userSchema);
+
+// API endpoint to save user data
+app.post('/api/users', async (req, res) => {
+  try {
+    const { Name, Usertype, MobileNumber, EmailAddress, Password } = req.body;
+
+    // Validate request body
+    // if (!Name || !Usertype || !MobileNumber || !EmailAddress || !Password) {
+    //   return res.status(400).json({ error: 'All fields are required' });
+    // }
+
+    // Create a new user instance
+    const newUser = new User({
+      Name,
+      Usertype,
+      MobileNumber,
+      EmailAddress,
+      Password
+    });
+
+    // Save the user to the database
+    const savedUser = await newUser.save();
+
+    res.status(201).json(savedUser);
+  } catch (error) {
+    console.error("Error saving user:", error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// API endpoint to fetch all users
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// PUT endpoint to update user data
+app.put('/api/users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate request body
+    const { Name, Usertype, MobileNumber, EmailAddress, Password } = req.body;
+    if (!Name || !Usertype || !MobileNumber || !EmailAddress || !Password) {
+      return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(id, req.body, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+
+// Delete a contact
+app.delete('/api/Users/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    await User.findByIdAndDelete(id);
+    res.status(204).end(); // No content, successful deletion
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // Add a route for the root path
 app.get('/', (req, res) => {
