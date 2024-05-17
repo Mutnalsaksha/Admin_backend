@@ -37,12 +37,14 @@ connectToDB();
 
 const bookserviceSchema = new mongoose.Schema({
   date: { type: String, required: true },
-  name: String,
-  phoneNumber: Number,
-  email: String,
-  service: String,
-  message:String
-  // Add other fields as needed
+  name: { type: String, required: true, minlength: 3, maxlength: 30 },
+  phoneNumber: { type: String, required: true, match: /^[0-9]{10}$/ },
+  email: { type: String, match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/ },
+  service: { type: String, required: true },
+  message: { type: String, minlength: 0, maxlength: 500 },
+}, {
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
 });
 
 const BookServices = mongoose.model('BookServices', bookserviceSchema, 'bookservices');
@@ -56,6 +58,44 @@ app.get('/getBookedServicesData', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+// POST endpoint to add data to BookServices
+app.post('/add-service', async (req, res) => {
+  try {
+    const { name, phoneNumber, email, service, message } = req.body;
+
+    // Get current date and time in Indian timezone
+    const currentDate = moment().tz('Asia/Kolkata').format('YYYY/MM/DD HH:mm:ss');
+
+    // Validate request body
+    if (!name || !phoneNumber || !service) {
+      return res.status(400).json({ error: 'Validation failed: name, phoneNumber, and service fields are required.' });
+    }
+
+    // Create a new instance of the BookServices model
+    const newService = new BookServices({
+      date: currentDate,
+      name,
+      phoneNumber,
+      email,
+      service,
+      message
+    });
+
+    // Save the data to the database
+    const savedService = await newService.save();
+
+    res.status(201).json(savedService);
+  } catch (error) {
+    console.error('Error adding service:', error); // Log the error to the console for debugging
+    res.status(500).json({ message: 'An error occurred while adding the service', error: error.message });
+  }
+});
+
+
+
+
 
 const loginSchema = new mongoose.Schema({
   email: String,
