@@ -94,8 +94,24 @@ app.post('/add-service', async (req, res) => {
 });
 
 
+app.put('/getBookedServicesData/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updatedData = req.body;
 
+    // Find the service request by ID and update it
+    const updatedService = await BookServices.findByIdAndUpdate(id, updatedData, { new: true });
 
+    if (!updatedService) {
+      return res.status(404).json({ error: 'Service request not found' });
+    }
+
+    res.json(updatedService);
+  } catch (error) {
+    console.error('Error updating service:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 const loginSchema = new mongoose.Schema({
   email: String,
